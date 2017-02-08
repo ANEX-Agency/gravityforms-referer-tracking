@@ -1,6 +1,6 @@
 === Gravity Forms - Referer Tracking ===
 Contributors: nischu7
-Donate link: http://paypal.me/nischu7
+Donate link: http://paypal.me/jns
 Tags: forms, referer, tracking
 Requires at least: 4.5.0
 Tested up to: 4.7
