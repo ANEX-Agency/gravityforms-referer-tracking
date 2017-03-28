@@ -4,7 +4,7 @@
  * Plugin Name:       Gravity Forms - Referer Tracking
  * Plugin URI:        https://github.com/ANEX-Agency/Gravityforms-Referer-Tracking
  * Description:       Saves Referers within a Cookie and submits them within hidden fields from a (gravity) form submission
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            ANEX
  * Author URI:        http://anex.at
  * License:           GPL-2.0+
