@@ -45,11 +45,31 @@ class GF_Field_RefTrack extends GF_Field {
         return serialize($engine->getCookieData());
     }
 
-    protected function _getPairStrings($data, $wrapStart = '', $wrapEnd = '') {
+    protected function _getPairStrings($data, $flat = true, $wrapStart = '', $wrapEnd = '') {
         $pairs = array();
 
         foreach($data as $k => $v) {
-            $pairs[] = $wrapStart . $k . ': ' . $v . $wrapEnd;
+
+            if(!is_array($v)) {
+
+                $html = $wrapStart . $k . ': ' . $v . $wrapEnd;
+
+            } else if($flat) {
+
+                $html = $wrapStart . $k . ': ' . implode(', ', $v) . $wrapEnd;
+
+            } else {
+
+                $html = $wrapStart . $k . '<ul style="padding: 0 15px">';
+
+                foreach($v as $x) {
+                    $html .= '<li>' . $x . '</li>';
+                }
+
+                $html .= '</ul>' . $wrapEnd;
+            }
+
+            $pairs[] = $html;
         }
 
         return $pairs;
@@ -90,7 +110,7 @@ class GF_Field_RefTrack extends GF_Field {
         if(!$data)
             return '';
 
-        $items = implode('', $this->_getPairStrings($data, '<li>', '</li>'));
+        $items = implode('', $this->_getPairStrings($data, false, '<li>', '</li>'));
 
         return "<ul class='bulleted'>{$items}</ul>";
     }

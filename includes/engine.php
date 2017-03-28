@@ -1,7 +1,7 @@
 <?php
 
 class Rebits_GF_RefTrack_Engine {
-    
+
     protected $_plugin;
 
     protected $_hashAlgos = array(
@@ -22,6 +22,8 @@ class Rebits_GF_RefTrack_Engine {
 
     public function init() {
         $this->updateCookie();
+
+        //var_dump($this->getCookieData());
     }
 
     public function getCookieName() {
@@ -70,7 +72,7 @@ class Rebits_GF_RefTrack_Engine {
         if($cookieHash != $this->_hash($cookieData))
             return false;
 
-        $data = @json_decode($cookieData, true, 2);
+        $data = @json_decode($cookieData, true, 3);
 
         return $data ? $data : array();
     }
@@ -92,7 +94,7 @@ class Rebits_GF_RefTrack_Engine {
         $data = $this->getUrlData();
 
         if($cookieData !== false && $strategy == 'merge')
-            $data = array_merge($cookieData, $data);
+            $data = array_merge_recursive($cookieData, $data);
 
         $data['timestamp'] = time();
 
@@ -101,7 +103,7 @@ class Rebits_GF_RefTrack_Engine {
         $expiry = time() + (int)$this->_plugin->getOption('cookie_expiry');
         $expiry = apply_filters('gf_reftrack_expiry', $expiry);
 
-        $data = json_encode($data, 0, 2);
+        $data = json_encode($data, 0, 3);
 
         $hmac = $this->_hash($data);
 
