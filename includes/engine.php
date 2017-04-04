@@ -81,6 +81,18 @@ class Rebits_GF_RefTrack_Engine {
         return hash_hmac($this->_algo, $str, NONCE_KEY);
     }
 
+    protected function _arrayUniqueRecursive($array) {
+
+        $result = array_map("unserialize", array_unique(array_map("serialize", $array)));
+
+        foreach ($result as $key => $value) {
+            if(is_array($value))
+                $result[$key] = $this->_arrayUniqueRecursive($value);
+        }
+
+        return $result;
+    }
+
     public function updateCookie() {
 
         $strategy = $this->_plugin->getOption('cookie_merge_strategy');
@@ -94,7 +106,7 @@ class Rebits_GF_RefTrack_Engine {
         $data = $this->getUrlData();
 
         if($cookieData !== false && $strategy == 'merge')
-            $data = array_merge_recursive($cookieData, $data);
+            $data = $this->_arrayUniqueRecursive(array_merge_recursive($cookieData, $data));
 
         $data['timestamp'] = time();
 
