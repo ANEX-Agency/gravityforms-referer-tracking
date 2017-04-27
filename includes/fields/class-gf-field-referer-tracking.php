@@ -14,7 +14,7 @@ class GF_Field_RefTrack extends GF_Field {
         );
     }
 
-    public function get_field_input() {
+    public function get_field_input( $form, $value = '', $entry = NULL ) {
         return '';
     }
 
@@ -38,7 +38,7 @@ class GF_Field_RefTrack extends GF_Field {
         return $field_content;
     }
 
-    public function get_value_save_entry() {
+    public function get_value_save_entry( $value, $form, $input_name, $lead_id, $lead ) {
 
         $engine = Rebits_GF_RefTrack::get_instance()->getEngine();
 

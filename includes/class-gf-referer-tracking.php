@@ -2,12 +2,12 @@
 
 GFForms::include_addon_framework();
 
-require_once __DIR__ . '/includes/fields/RefTrack.php';
+require_once __DIR__ . '/fields/class-gf-field-referer-tracking.php';
 
 class Rebits_GF_RefTrack extends GFAddOn {
 
-    protected $_version = '0.1';
-    protected $_min_gravityforms_version = '2.1';
+    protected $_version = '1.2.0';
+    protected $_min_gravityforms_version = '2.2';
     protected $_slug = 'gravityforms-referer-tracking';
     protected $_path = 'gravityforms-referer-tracking/gravityforms-referer-tracking.php';
     protected $_full_path = __FILE__;
@@ -31,7 +31,7 @@ class Rebits_GF_RefTrack extends GFAddOn {
 
         parent::init();
 
-        require_once __DIR__ . '/includes/engine.php';
+        require_once __DIR__ . '/class-gf-referer-tracking-engine.php';
 
         $this->_engine = new Rebits_GF_RefTrack_Engine($this);
     }
@@ -48,33 +48,27 @@ class Rebits_GF_RefTrack extends GFAddOn {
             array(
                 'title'  => esc_html__( 'Referer Tracking Settings', 'gravityforms-referer-tracking' ),
                 'fields' => array(
-                    'params' => array(
-                        'name'              => 'params',
-                        'tooltip'           => esc_html__( 'White-list one url parameter per line here', 'gravityforms-referer-tracking' ),
-                        'label'             => esc_html__( 'URL Parameters', 'gravityforms-referer-tracking' ),
-                        'type'              => 'textarea',
-                    ),
 
                    'cookie_name' => array(
-                        'name'              => 'cookie_name',
-                        'tooltip'           => esc_html__( 'Cookie Name', 'gravityforms-referer-tracking' ),
                         'label'             => esc_html__( 'Cookie Name', 'gravityforms-referer-tracking' ),
+                        'tooltip'           => esc_html__( 'Name your Cookie here', 'gravityforms-referer-tracking' ),
+                        'name'              => 'cookie_name',
                         'type'              => 'text',
-                        'default'           => '__gf_reftrack',
+                        'default'           => '__gf_referertrack',
                     ),
 
                     'cookie_expiry' => array(
-                        'name'              => 'cookie_expiry',
-                        'tooltip'           => esc_html__( 'Cookie Expiration in seconds (default: 60*60*24*60 = 5184000 = 60 days', 'gravityforms-referer-tracking' ),
                         'label'             => esc_html__( 'Cookie Expiry', 'gravityforms-referer-tracking' ),
+                        'tooltip'           => esc_html__( 'Cookie Expiration in seconds (default: 60*60*24*60 = 5184000 = 60 days', 'gravityforms-referer-tracking' ),
+                        'name'              => 'cookie_expiry',
                         'type'              => 'text',
                         'default'           => 5184000,
                     ),
 
                     'cookie_merge_strategy' => array(
-                        'name'              => 'cookie_merge_strategy',
-                        'tooltip'           => esc_html__( 'How to behave if the cookie is already set?', 'gravityforms-referer-tracking' ),
                         'label'             => esc_html__( 'Cookie Merge Strategy', 'gravityforms-referer-tracking' ),
+                        'tooltip'           => esc_html__( 'How to behave if the cookie is already set?', 'gravityforms-referer-tracking' ),
+                        'name'              => 'cookie_merge_strategy',
                         'type'              => 'select',
                         'default'           => 'keep',
                         'choices'           => array(
@@ -91,8 +85,16 @@ class Rebits_GF_RefTrack extends GFAddOn {
                                 'label' => __( 'Merge with current request parameters', 'gravityforms-referer-tracking' )
                             )
                         )
+                    ),
+					
+                    'params' => array(
+                        'label'             => esc_html__( 'URL Parameters', 'gravityforms-referer-tracking' ),
+                        'tooltip'           => esc_html__( 'White-list one url parameter per line here', 'gravityforms-referer-tracking' ),
+                        'name'              => 'params',
+						'type'				=> 'textarea',
+						'class'				=> 'medium',
                     )
-                    
+					
                 )
             )
         );
