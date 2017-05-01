@@ -4,11 +4,11 @@ Donate link: http://paypal.me/anex
 Tags: forms, referer, tracking
 Requires at least: 4.5.0
 Tested up to: 4.7
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Saves Referers within a Cookie and submits them within hidden fields from a (gravity) form submission
+Saves Referers within a Cookie and submits them within hidden fields through form submission
 
 == Description ==
 
@@ -24,6 +24,9 @@ Saves Referers within a Cookie and submits them within hidden fields from a (gra
 -
 
 == Changelog ==
+= 1.3.0 - 27/04/2017 =
+* Improved code architecture (naming convention, spacings,...)
+
 = 1.2.0 - 27/04/2017 =
 * Improved plugin structure.
 

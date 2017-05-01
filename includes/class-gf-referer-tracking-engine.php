@@ -1,93 +1,157 @@
 <?php
 
-class Rebits_GF_RefTrack_Engine {
-
+class GF_Referer_Tracking_Engine {
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
     protected $_plugin;
 
-    protected $_hashAlgos = array(
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    protected $_hash_algos = array(
         'sha1'   => 40,
         'sha256' => 64,
     );
-
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
     protected $_algo = 'sha1';
-
-    public function __construct($plugin) {
-
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    public function __construct( $plugin ) {
         $this->_plugin = $plugin;
-
-        //add_action('init', array($this, 'init'));
-
         $this->init();
     }
-
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
     public function init() {
-        $this->updateCookie();
-
-        //var_dump($this->getCookieData());
+        $this->update_cookie();
     }
-
-    public function getCookieName() {
-        return apply_filters('gf_reftrack_cookie_name', $this->_plugin->getOption('cookie_name'));
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    public function get_cookie_name() {
+        return apply_filters( 'gform_referer_tracking_cookie_name', $this->_plugin->get_option( 'cookie_name' ) );
     }
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    public function get_valid_url_keys() {
+		
+        $keyList = $this->_plugin->get_option( 'params' );
 
-    public function getValidUrlKeys() {
-        $keyList = $this->_plugin->getOption('params');
+        $keys = explode( "\n", $keyList );
+        $keys = array_map( 'trim', $keys );
 
-        $keys = explode("\n", $keyList);
-        $keys = array_map('trim', $keys);
-
-        return apply_filters('gf_reftrack_allowed_keys', $keys);
+        return apply_filters( 'gform_referer_tracking_allowed_keys', $keys );
+		
     }
-
-    public function getUrlData() {
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    public function get_url_data() {
 
         $data = $_GET;
 
-        $valid = $this->getValidUrlKeys();
+        $valid = $this->get_valid_url_keys();
 
-        $data = array_intersect_key($data, array_flip($valid));
+        $data = array_intersect_key( $data, array_flip( $valid ) );
 
-        $data = array_filter($data, 'is_string');
+        $data = array_filter( $data, 'is_string' );
 
-        return apply_filters('gf_reftrack_url_data', $data);
+        return apply_filters( 'gform_referer_tracking_url_data', $data );
+		
     }
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    public function get_cookie_data() {
 
-    public function getCookieData() {
+        $name = $this->get_cookie_name();
 
-        $name = $this->getCookieName();
-
-        if(!isset($_COOKIE[$name]))
+        if( ! isset( $_COOKIE[$name] ) )
             return false;
 
         $data = $_COOKIE[$name];
 
-        $hashLength = $this->_hashAlgos[$this->_algo];
+        $hashLength = $this->_hash_algos[$this->_algo];
 
-        $cookieData = stripslashes(substr($data, $hashLength));
-        if(!$cookieData)
+        $cookieData = stripslashes( substr( $data, $hashLength ) );
+        if( ! $cookieData )
             return false;
 
-        $cookieHash = substr($data, 0, $hashLength);
+        $cookieHash = substr( $data, 0, $hashLength );
 
-        if($cookieHash != $this->_hash($cookieData))
+        if( $cookieHash != $this->_hash( $cookieData ) )
             return false;
 
-        $data = @json_decode($cookieData, true, 3);
+        $data = @json_decode( $cookieData, true, 3 );
 
         return $data ? $data : array();
     }
-
-    protected function _hash($str) {
-        return hash_hmac($this->_algo, $str, NONCE_KEY);
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    protected function _hash( $string ) {
+        return hash_hmac( $this->_algo, $string, NONCE_KEY );
     }
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    protected function _make_unique( array $array ) {
+		
+        foreach( $array as $k => &$v ) {
 
-    protected function _makeUnique(array $array) {
-        foreach($array as $k => &$v) {
+            if( is_array( $v ) ) {
+                $v = array_unique( $v );
 
-            if(is_array($v)) {
-                $v = array_unique($v);
-
-                if(count($v) == 1) {
+                if( count( $v ) == 1 ) {
                     $v = $v[0];
                 }
             }
@@ -95,34 +159,43 @@ class Rebits_GF_RefTrack_Engine {
         }
 
         return $array;
+		
     }
+	
+	/**
+	 * -
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+    public function update_cookie() {
 
-    public function updateCookie() {
+        $strategy = $this->_plugin->get_option( 'cookie_mode' );
 
-        $strategy = $this->_plugin->getOption('cookie_merge_strategy');
-
-        $cookieData = $this->getCookieData();
+        $cookieData = $this->get_cookie_data();
 
         // If the cookie is valid and we should keep it, abort here.
-        if($cookieData !== false && $strategy == 'keep')
+        if( $cookieData !== false && $strategy == 'keep' )
             return;
 
-        $data = $this->getUrlData();
+        $data = $this->get_url_data();
 
-        if($cookieData !== false && $strategy == 'merge')
-            $data = $this->_makeUnique(array_merge_recursive($cookieData, $data));
+        if( $cookieData !== false && $strategy == 'merge' )
+            $data = $this->_make_unique( array_merge_recursive( $cookieData, $data ) );
 
         $data['timestamp'] = time();
 
-        $data = apply_filters('gf_reftrack_set_cookie_data', $data);
+        $data = apply_filters( 'gform_referer_tracking_set_cookie_data', $data );
 
-        $expiry = time() + (int)$this->_plugin->getOption('cookie_expiry');
-        $expiry = apply_filters('gf_reftrack_expiry', $expiry);
+        $expiry = time() + ( int )$this->_plugin->get_option( 'cookie_expiry' );
+        $expiry = apply_filters( 'gform_referer_tracking_cookie_expiry', $expiry );
 
-        $data = json_encode($data, 0, 3);
+        $data = json_encode( $data, 0, 3 );
 
-        $hmac = $this->_hash($data);
+        $hmac = $this->_hash( $data );
 
-        setcookie($this->getCookieName(), $hmac . $data, $expiry, COOKIEPATH, COOKIE_DOMAIN, false, true);
+        setcookie( $this->get_cookie_name(), $hmac . $data, $expiry, COOKIEPATH, COOKIE_DOMAIN, false, true );
+		
     }
+	
 }
