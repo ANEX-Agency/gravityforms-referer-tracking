@@ -57,7 +57,7 @@ class GF_Field_Referer_Tracking extends GF_Field {
 
     public function get_value_save_entry( $value, $form, $input_name, $lead_id, $lead ) {
 
-        $engine = GF_Referer_Tracking_Addon::get_instance()->get_engine();
+        $engine = GF_Referer_Tracking::get_instance()->get_engine();
 
         return serialize( $engine->get_cookie_data() );
 		

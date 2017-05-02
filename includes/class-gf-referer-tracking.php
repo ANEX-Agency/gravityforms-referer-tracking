@@ -10,7 +10,7 @@ GFForms::include_addon_framework();
  * @author    ANEX
  * @copyright Copyright (c) 2017, ANEX
  */
-class GF_Referer_Tracking_Addon extends GFAddOn {
+class GF_Referer_Tracking extends GFAddOn {
 	
 	/**
 	 * Contains an instance of this class, if available.
@@ -82,7 +82,7 @@ class GF_Referer_Tracking_Addon extends GFAddOn {
 	 * @access protected
 	 * @var    string $_title The title of the Add-On.
 	 */
-    protected $_title = 'Referer Tracking';
+    protected $_title = 'Gravity Forms Referer Tracking';
 	
 	/**
 	 * Defines the short title of the Add-On.
@@ -108,7 +108,7 @@ class GF_Referer_Tracking_Addon extends GFAddOn {
 	 * @since  1.0.0
 	 * @access public
 	 *
-	 * @return GF_Referer_Tracking_Addon
+	 * @return GF_Referer_Tracking
 	 */
 	public static function get_instance() {
 
@@ -139,6 +139,7 @@ class GF_Referer_Tracking_Addon extends GFAddOn {
 				
 			require_once 'fields/class-gf-field-referer-tracking.php';
 			
+			
 		}
 	}
 	
@@ -153,6 +154,8 @@ class GF_Referer_Tracking_Addon extends GFAddOn {
         parent::init();
 
         $this->_engine = new GF_Referer_Tracking_Engine( $this );
+		
+		require_once 'template-functions.php';
 		
     }
 	
